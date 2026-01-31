@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>justar.m | Engineering Security Resilience</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+        
+        /* Dark Mode Defaults */
+        .dark body { background-color: #020617; color: #ffffff; }
+        
+        /* Light Mode Defaults */
+        body:not(.dark) { background-color: #ffffff; color: #0f172a; }
+
+        /* --- Custom Animations --- */
+        @keyframes ken-burns {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+            100% { transform: scale(1); }
+        }
+        .animate-ken-burns { animation: ken-burns 30s ease-in-out infinite; }
+
+        @keyframes text-glow {
+            0%, 100% { filter: drop-shadow(0 0 2px rgba(59, 130, 246, 0.3)); }
+            50% { filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6)); }
+        }
+        .animate-text-glow { animation: text-glow 4s ease-in-out infinite; }
+
+        @keyframes pulse-blue {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(59, 130, 246, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .whatsapp-pulse { animation: pulse-blue 2s infinite; }
+
+        .text-shimmer {
+            background: linear-gradient(to right, #3B82F6 20%, #ffffff 40%, #ffffff 60%, #3B82F6 80%);
+            background-size: 200% auto;
+            color: #3B82F6;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textShimmer 4s linear infinite;
+        }
+        @keyframes textShimmer { to { background-position: 200% center; } }
+
+        /* --- UI Components --- */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+        }
+        .dark .glass-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        body:not(.dark) .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.17, 0.55, 0.55, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom scrollbar for desktop */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3B82F6; }
+
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #020617; z-index: 9999; display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #preloader.loaded {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 640px) {
+            .mobile-h1 { font-size: 2.75rem; line-height: 1.1; }
+            .section-padding { padding-top: 4rem; padding-bottom: 4rem; }
+        }
+    </style>
+</head>
+<body class="dark overflow-x-hidden">
+
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="relative w-24 h-24">
+            <div class="absolute inset-0 border-4 border-white/5 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-t-[#3B82F6] rounded-full animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <img src="logo.png" alt="JM" class="w-10 h-10 object-contain" onerror="this.outerHTML='<span class=\'font-black text-white text-[10px] uppercase tracking-widest\'>justar.m</span>'">
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Layer with Video -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden w-full h-full">
+        <video autoplay muted loop playsinline class="w-full h-full object-cover opacity-30 dark:opacity-20 animate-ken-burns">
+            <source src="background.mp4" type="video/mp4">
+            <!-- Fallback image if video fails to load -->
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1600" alt="Security Grid" class="w-full h-full object-cover">
+        </video>
+        <div class="absolute inset-0 bg-gradient-to-b from-slate-950 via-slate-950/60 to-slate-950 z-10 dark:block hidden"></div>
+        <div class="absolute inset-0 bg-white/80 z-10 dark:hidden"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 py-2 sm:py-4 transition-all duration-700 top-0 sm:top-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-2xl border border-white/10 backdrop-blur-xl bg-slate-900/95 dark:bg-slate-900/95 bg-white/95">
+                <div class="flex items-center space-x-3 group cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                    <img src="logo.png" alt="justar.m Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-lg shadow-lg transition-transform group-hover:scale-110" onerror="this.outerHTML='<div class=\'w-8 h-8 sm:w-10 sm:h-10 bg-[#3B82F6] rounded-lg flex items-center justify-center text-white font-black shadow-lg\'>JM</div>'">
+                    <div class="flex flex-col">
+                        <span class="font-black text-sm sm:text-lg tracking-tighter uppercase leading-none dark:text-white text-slate-950">JUSTAR.<span class="text-[#3B82F6]">M</span></span>
+                        <span class="text-[7px] sm:text-[8px] font-bold tracking-[0.3em] sm:tracking-[0.4em] uppercase opacity-70 dark:text-white text-slate-950">Engineering Resilience</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#" class="text-[10px] font-black uppercase tracking-widest hover:text-[#3B82F6] transition-colors dark:text-white text-slate-950">Home</a>
+                    <a href="#services" class="text-[10px] font-black uppercase tracking-widest hover:text-[#3B82F6] transition-colors dark:text-white text-slate-950">Services</a>
+                    <a href="#about" class="text-[10px] font-black uppercase tracking-widest hover:text-[#3B82F6] transition-colors dark:text-white text-slate-950">About Us</a>
+                    <a href="#contact-section" class="text-[10px] font-black uppercase tracking-widest hover:text-[#3B82F6] transition-colors dark:text-white text-slate-950">Contacts</a>
+                                                                        
+                    <!-- Theme Toggle -->
+                    <button id="theme-toggle" class="p-2 rounded-xl glass-card border-none hover:bg-[#3B82F6]/20 transition-all" aria-label="Toggle theme">
+                        <i data-lucide="sun" id="sun-icon" class="hidden dark:block text-[#3B82F6]"></i>
+                        <i data-lucide="moon" id="moon-icon" class="block dark:hidden text-slate-950"></i>
+                    </button>
+
+                    <a href="tel:0790496326" class="px-6 py-3 bg-[#3B82F6] text-white rounded-xl font-bold hover:brightness-110 transition-all shadow-lg uppercase text-[10px] tracking-widest active:scale-95">Dispatch: 079 049 6326</a>
+                </div>
+
+                <div class="lg:hidden flex items-center space-x-3">
+                    <button id="theme-toggle-mobile" class="p-2 rounded-xl glass-card border-none" aria-label="Toggle theme">
+                        <i data-lucide="sun" class="hidden dark:block text-[#3B82F6] w-5 h-5"></i>
+                        <i data-lucide="moon" class="block dark:hidden text-slate-950 w-5 h-5"></i>
+                    </button>
+                    <button id="menu-toggle" class="dark:text-white text-slate-900 p-2" aria-label="Toggle menu">
+                        <i data-lucide="menu" id="menu-icon" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden absolute top-20 left-4 right-4 dark:bg-slate-900 bg-white border border-white/10 rounded-2xl p-6 shadow-2xl lg:hidden">
+            <div class="flex flex-col space-y-5">
+                <a href="#" class="mobile-link text-xs font-black uppercase tracking-widest dark:text-white text-slate-950">Home</a>
+                <a href="#services" class="mobile-link text-xs font-black uppercase tracking-widest dark:text-white text-slate-950">Services</a>
+                <a href="#about" class="mobile-link text-xs font-black uppercase tracking-widest dark:text-white text-slate-950">About Us</a>
+                <a href="#contact-section" class="mobile-link text-xs font-black uppercase tracking-widest dark:text-white text-slate-950">Contacts</a>
+                <a href="tel:0790496326" class="bg-[#3B82F6] text-white py-4 rounded-xl font-black text-center uppercase text-xs tracking-widest flex items-center justify-center gap-3">
+                    <i data-lucide="phone" class="w-4 h-4"></i> Call Dispatch Unit
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex items-center pt-20 sm:pt-24 overflow-hidden relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6 sm:space-y-8 text-center lg:text-left reveal">
+                <div class="inline-flex items-center space-x-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-[#3B82F6]/10 border border-[#3B82F6]/20 rounded-full">
+                    <span class="w-2 h-2 bg-[#3B82F6] rounded-full animate-pulse"></span>
+                    <span class="text-[#3B82F6] text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em]">South Africa's Premier Security Engineering</span>
+                </div>
+                
+                <h1 class="mobile-h1 text-5xl md:text-7xl font-black tracking-tighter uppercase dark:text-white text-slate-900 leading-none">
+                    Engineering <br />
+                    <span class="text-shimmer animate-text-glow">Resilience</span> <br />
+                    Daily.
+                </h1>
+                
+                <p class="text-base sm:text-lg md:text-xl max-w-xl mx-auto lg:mx-0 font-medium leading-relaxed dark:text-slate-400 text-slate-600">
+                    justar.m provides multidisciplinary infrastructure and security powerhouses. We specialize in high-performance solar and automated defense solutions.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 pt-4 sm:pt-6">
+                    <a href="tel:0790496326" class="px-8 py-4 sm:px-10 sm:py-5 bg-[#3B82F6] text-white font-black rounded-xl sm:rounded-2xl shadow-2xl hover:scale-105 transition-all flex items-center justify-center uppercase tracking-widest text-[11px] sm:text-xs">
+                        Call Dispatch <i data-lucide="phone" class="ml-3 w-4 h-4"></i>
+                    </a>
+                    <a href="https://wa.me/27790496326" class="px-8 py-4 sm:px-10 sm:py-5 glass-card font-black rounded-xl sm:rounded-2xl border border-white/10 transition-all uppercase tracking-widest text-[11px] sm:text-xs flex items-center justify-center hover:bg-white/5 active:scale-95 dark:text-white text-slate-950">
+                        WhatsApp Unit
+                    </a>
+                </div>
+            </div>
+
+            <div class="hidden lg:block relative reveal" style="transition-delay: 200ms;">
+                <div class="relative z-10 rounded-[3.5rem] overflow-hidden shadow-2xl border border-white/10 transform -rotate-3 hover:rotate-0 transition-all duration-1000 aspect-square group">
+                    <img src="https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=800&q=80" alt="justar.m Infrastructure" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[4000ms]" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60"></div>
+                    <div class="absolute bottom-8 left-8 right-8">
+                         <p class="text-2xl font-black uppercase tracking-tighter text-white">Smart Defense</p>
+                         <p class="text-xs text-[#3B82F6] font-bold uppercase tracking-widest">Certified Infrastructure Unit</p>
+                    </div>
+                </div>
+                <div class="absolute -bottom-10 -left-10 w-64 h-64 bg-[#3B82F6]/10 blur-[100px] rounded-full"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section id="services" class="section-padding py-24 sm:py-32 relative bg-slate-950/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center space-y-3 sm:space-y-4 mb-16 sm:mb-24 reveal">
+                <h2 class="text-[#3B82F6] font-black tracking-[0.3em] sm:tracking-[0.4em] uppercase text-[10px] sm:text-[11px]">Core Infrastructure</h2>
+                <h3 class="text-3xl sm:text-5xl font-black tracking-tighter uppercase leading-tight dark:text-white text-slate-900">Strategic Solutions</h3>
+                <p class="max-w-2xl mx-auto text-xs sm:text-sm dark:text-slate-500 text-slate-500 font-medium px-4">Our specialized engineering services are designed to automate and fortify your property.</p>
+                <div class="w-16 sm:w-24 h-1.5 sm:h-2 bg-[#3B82F6] mx-auto rounded-full mt-4 opacity-50"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8" id="services-container">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- The Protocol (Process) -->
+    <section id="process" class="section-padding py-24 sm:py-32 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-20 items-center">
+                <div class="space-y-10 sm:space-y-12 reveal">
+                    <div class="space-y-3 sm:space-y-4 text-center lg:text-left">
+                      <h2 class="text-[#3B82F6] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] text-[10px] sm:text-[11px]">Operational Methodology</h2>
+                      <h3 class="text-3xl sm:text-5xl font-black uppercase tracking-tighter leading-none dark:text-white text-slate-950">The justar.m <br /> Engineering Protocol.</h3>
+                    </div>
+                    
+                    <div class="space-y-6 sm:space-y-8" id="process-steps">
+                      <!-- Populated via JS -->
+                    </div>
+                </div>
+                <div class="glass-card p-8 sm:p-12 rounded-[2rem] sm:rounded-[3.5rem] reveal">
+                    <p class="text-base sm:text-xl font-medium dark:text-slate-300 text-slate-600 italic leading-relaxed">"Security is a multidisciplinary engineering challenge. We don't just install products; we engineer peace of mind using smart, solar-powered logic."</p>
+                    <div class="flex items-center gap-4 border-t border-white/10 pt-6 sm:pt-8 mt-6 sm:mt-8">
+                         <div class="w-10 h-10 sm:w-14 sm:h-14 bg-[#3B82F6] rounded-full flex items-center justify-center font-black text-white text-sm sm:text-xl shadow-lg">JM</div>
+                         <div>
+                            <p class="font-black text-xs uppercase dark:text-white text-slate-900 leading-tight">Lead Systems Architect</p>
+                            <p class="text-[9px] sm:text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">justar.m | HQ</p>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact-section" class="section-padding py-24 sm:py-32 relative reveal bg-slate-950/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-20 items-center">
+                <div class="space-y-8 sm:space-y-12 text-center lg:text-left">
+                    <div class="space-y-3 sm:space-y-4">
+                        <h2 class="text-[#3B82F6] font-black tracking-[0.3em] sm:tracking-[0.4em] uppercase text-[10px] sm:text-[11px]">Ready for Transmission</h2>
+                        <h3 class="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.8] dark:text-white text-slate-900">
+                            Fortify <br />
+                            <span class="text-[#3B82F6] text-shimmer animate-text-glow">The Asset.</span> <br />
+                            Immediately.
+                        </h3>
+                    </div>
+                    <div class="space-y-6 sm:space-y-8 text-left max-w-md mx-auto lg:mx-0 pt-4 sm:pt-6">
+                        <!-- Phone -->
+                        <div class="flex items-center space-x-4 sm:space-x-6 group cursor-pointer" onclick="location.href='tel:0790496326'">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 glass-card rounded-xl sm:rounded-2xl flex items-center justify-center text-[#3B82F6] group-hover:bg-[#3B82F6] group-hover:text-white transition-all shadow-xl">
+                                <i data-lucide="phone" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                            </div>
+                            <div>
+                                <p class="text-[9px] sm:text-[10px] font-black uppercase mb-0.5 sm:mb-1 text-slate-500">Dispatch Hotline</p>
+                                <p class="text-xl sm:text-2xl font-black leading-none dark:text-white text-slate-900">079 049 6326</p>
+                            </div>
+                        </div>
+                        <!-- WhatsApp -->
+                        <div class="flex items-center space-x-4 sm:space-x-6 group cursor-pointer" onclick="location.href='https://wa.me/27790496326'">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 glass-card rounded-xl sm:rounded-2xl flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-xl">
+                                <i data-lucide="message-circle" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                            </div>
+                            <div>
+                                <p class="text-[9px] sm:text-[10px] font-black uppercase mb-0.5 sm:mb-1 text-slate-500">WhatsApp Logic</p>
+                                <p class="text-xl sm:text-2xl font-black leading-none dark:text-white text-slate-900">079 049 6326</p>
+                            </div>
+                        </div>
+                        <!-- Email -->
+                        <div class="flex items-center space-x-4 sm:space-x-6 group cursor-pointer" onclick="location.href='mailto:info@justarm.coza'">
+                            <div class="w-12 h-12 sm:w-16 sm:h-16 glass-card rounded-xl sm:rounded-2xl flex items-center justify-center text-[#3B82F6] group-hover:bg-[#3B82F6] group-hover:text-white transition-all shadow-xl">
+                                <i data-lucide="mail" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                            </div>
+                            <div>
+                                <p class="text-[9px] sm:text-[10px] font-black uppercase mb-0.5 sm:mb-1 text-slate-500">Official Transmission</p>
+                                <p class="text-base sm:text-xl font-black leading-none dark:text-white text-slate-900">info@justarm.coza</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 sm:p-12 rounded-[1.5rem] sm:rounded-[2.5rem] shadow-2xl">
+                    <form action="https://formspree.io/f/mgvleedr" method="POST" class="space-y-4 sm:space-y-6">
+                        <h4 class="text-2xl sm:text-3xl font-black mb-4 sm:mb-8 uppercase tracking-tighter dark:text-white text-slate-900 text-center lg:text-left">Secure Consultation</h4>
+                        <div class="space-y-3 sm:space-y-4">
+                            <input type="text" name="name" placeholder="Full Client Name" class="w-full glass-card bg-white/5 border-none rounded-xl p-4 sm:p-5 outline-none focus:ring-2 focus:ring-[#3B82F6] dark:text-white text-slate-900 text-sm sm:text-base" required />
+                            <input type="tel" name="phone" placeholder="Contact Phone Number" class="w-full glass-card bg-white/5 border-none rounded-xl p-4 sm:p-5 outline-none focus:ring-2 focus:ring-[#3B82F6] dark:text-white text-slate-900 text-sm sm:text-base" required />
+                            <select name="focus" class="w-full glass-card bg-white/5 border-none rounded-xl p-4 sm:p-5 outline-none focus:ring-2 focus:ring-[#3B82F6] dark:text-white text-slate-900 bg-transparent text-sm sm:text-base appearance-none">
+                                <option value="" disabled selected>Primary Security Focus</option>
+                                <option value="smart-home">Smart Home Integration</option>
+                                <option value="cctv">CCTV Cameras</option>
+                                <option value="fence">Electrical Fencing</option>
+                                <option value="solar">Solar Systems</option>
+                                <option value="gate">Gate Automation</option>
+                            </select>
+                            <textarea name="message" placeholder="Technical Requirements & Message" rows="3" class="w-full glass-card bg-white/5 border-none rounded-xl p-4 sm:p-5 outline-none focus:ring-2 focus:ring-[#3B82F6] dark:text-white text-slate-900 text-sm sm:text-base"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-[#3B82F6] text-white font-black py-5 sm:py-6 rounded-xl sm:rounded-2xl shadow-2xl hover:brightness-110 transition-all uppercase tracking-[0.2em] sm:tracking-[0.3em] text-[10px] sm:text-xs">Transmit To Unit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 sm:py-20 bg-slate-950 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center lg:text-left grid lg:grid-cols-2 items-center gap-8 sm:gap-10">
+            <div>
+                <div class="flex items-center space-x-3 mb-4 justify-center lg:justify-start">
+                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-[#3B82F6] rounded-lg flex items-center justify-center text-white font-black">JM</div>
+                    <h4 class="text-lg sm:text-xl font-black tracking-tighter uppercase text-white">JUSTAR.M</h4>
+                </div>
+                <p class="text-[10px] sm:text-xs font-medium opacity-50 text-white max-w-sm mx-auto lg:mx-0 leading-relaxed">South Africa's partner in smart security infrastructure and engineering resilience.</p>
+                <div class="mt-4">
+                    <a href="mailto:info@justarm.coza" class="text-[9px] uppercase tracking-widest text-[#3B82F6] font-black">info@justarm.coza</a>
+                </div>
+            </div>
+            <div class="text-center lg:text-right">
+                <p class="text-[10px] sm:text-xs font-medium opacity-50 text-white">© 2026 JUSTAR.M. ALL RIGHTS RESERVED.</p>
+                <div class="flex items-center justify-center lg:justify-end space-x-3 sm:space-x-4 mt-4">
+                    <span class="text-[8px] sm:text-[9px] uppercase tracking-widest text-[#3B82F6] font-black">Secure</span>
+                    <span class="text-[8px] sm:text-[9px] uppercase tracking-widest text-white opacity-20">•</span>
+                    <span class="text-[8px] sm:text-[9px] uppercase tracking-widest text-[#3B82F6] font-black">Reliable</span>
+                    <span class="text-[8px] sm:text-[9px] uppercase tracking-widest text-white opacity-20">•</span>
+                    <span class="text-[8px] sm:text-[9px] uppercase tracking-widest text-[#3B82F6] font-black">Certified</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Button -->
+    <a href="https://wa.me/27790496326" target="_blank" class="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[100] bg-emerald-500 text-white w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all whatsapp-pulse" id="floating-wa">
+    </a>
+
+    <script>
+        // WhatsApp SVG
+        const waSvg = `<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor" xmlns="http://www.w3.org/2000/svg" class="sm:w-[32px] sm:h-[32px]"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.446 4.432-9.877 9.888-9.877 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.881-9.886 9.881zM21.158 2.808A11.087 11.087 0 0012.046 0C5.435 0 .058 5.377.056 11.99c0 2.112.551 4.174 1.598 6.01L0 24l6.15-1.613a11.047 11.047 0 005.89 1.666h.005c6.612 0 11.987-5.379 11.99-11.99a11.044 11.044 0 00-3.282-7.882z" /></svg>`;
+        document.getElementById('floating-wa').innerHTML = waSvg;
+
+        // Theme Toggle Logic
+        const themeToggles = [document.getElementById('theme-toggle'), document.getElementById('theme-toggle-mobile')];
+        themeToggles.forEach(btn => {
+            btn.onclick = () => {
+                document.documentElement.classList.toggle('dark');
+                lucide.createIcons();
+            };
+        });
+
+        // Current Services Data
+        const services = [
+            { 
+                 title: "Smart Home Integration", 
+                 icon: "home", 
+                 desc: "Automate your residence with integrated lighting, climate, and security logic. Control your entire asset from a single mobile dashboard.", 
+                 bullets: ["Device Interconnectivity", "Mobile Command Unit", "Automated Efficiency"] 
+             },
+            { 
+                 title: "Cctv Cameras", 
+                 icon: "video", 
+                 desc: "High-definition 4K surveillance networks with AI detection. Proactive monitoring and motion tracking logic for 24/7 visibility.", 
+                 bullets: ["Remote Mobile Monitoring", "Night Vision Arrays", "4K Video Resolution"] 
+             },
+            { 
+                 title: "Electrical Fance", 
+                 icon: "zap", 
+                 desc: "Tensioned electric perimeter barriers designed for non-lethal deterrence. Fully compliant with national safety regulations.", 
+                 bullets: ["SANS Safety Certification", "Surge Protection Logic", "Intrusion Alarm Link"] 
+             },
+            { 
+                 title: "Solar System", 
+                 icon: "sun", 
+                 desc: "Independent power arrays ensuring your security infrastructure remains operational during load shedding or grid failure.", 
+                 bullets: ["Off-Grid Resilience", "Lithium Storage Units", "Professional Support"] 
+             },
+            { 
+                 title: "Gate Automation", 
+                 icon: "settings", 
+                 desc: "High-speed industrial-grade automation for residential and commercial entry points. Minimizing your vulnerability windows.", 
+                 bullets: ["Centurion Motor Units", "Battery Backup Standard", "Remote Logic Access"] 
+             }
+        ];
+
+        const steps = [
+            { n: "01", t: "Security Audit", d: "A comprehensive assessment identifying perimeter blind spots and weaknesses." },
+            { n: "02", t: "Systems Engineering", d: "Designing the solar and automated topology for your specific property." },
+            { n: "03", t: "Surgical Implementation", d: "Professional installation by our certified unit with zero downtime." },
+            { n: "04", t: "Compliance Handoff", d: "Final certification, user training, and 24/7 support activation." }
+        ];
+
+        // Initialization Function
+        function initializeApp() {
+            const loader = document.getElementById('preloader');
+            if (loader.classList.contains('loaded')) return;
+
+            lucide.createIcons();
+
+            // Populate Services
+            const sCont = document.getElementById('services-container');
+            if(sCont && sCont.children.length === 0) {
+                services.forEach(s => {
+                    const card = document.createElement('div');
+                    card.className = 'glass-card p-6 sm:p-10 rounded-2xl sm:rounded-[2.5rem] group flex flex-col border-l-4 border-l-[#3B82F6] reveal';
+                    card.innerHTML = `
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 bg-[#3B82F6] rounded-xl sm:rounded-2xl flex items-center justify-center mb-6 sm:mb-8 text-white group-hover:rotate-12 transition-transform shadow-xl">
+                            <i data-lucide="${s.icon}" class="w-6 h-6 sm:w-8 sm:h-8"></i>
+                        </div>
+                        <h4 class="text-xl sm:text-2xl font-black mb-3 sm:mb-4 uppercase tracking-tighter dark:text-white text-slate-900 leading-tight">${s.title}</h4>
+                        <p class="mb-6 sm:mb-8 text-[11px] sm:text-xs font-medium opacity-70 leading-relaxed flex-grow dark:text-slate-400 text-slate-600">${s.desc}</p>
+                        <div class="space-y-2 mb-4 sm:mb-8 border-t border-white/5 pt-4 sm:pt-6">
+                            ${s.bullets.map(b => `<div class="flex items-center gap-2 text-[8px] sm:text-[9px] font-black uppercase dark:text-white text-slate-900"><div class="w-1.5 h-1.5 bg-[#3B82F6] rounded-full"></div> ${b}</div>`).join('')}
+                        </div>
+                    `;
+                    sCont.appendChild(card);
+                });
+            }
+
+            // Populate Steps
+            const pCont = document.getElementById('process-steps');
+            if(pCont && pCont.children.length === 0) {
+                steps.forEach(st => {
+                    const item = document.createElement('div');
+                    item.className = 'flex gap-4 sm:gap-6 group';
+                    item.innerHTML = `
+                        <div class="text-3xl sm:text-4xl font-black text-slate-500/10 group-hover:text-[#3B82F6]/40 transition-colors duration-500">${st.n}</div>
+                        <div class="space-y-1 sm:space-y-2">
+                            <h4 class="text-base sm:text-xl font-black uppercase tracking-tighter dark:text-white text-slate-900">${st.t}</h4>
+                            <p class="text-[11px] sm:text-xs dark:text-slate-400 text-slate-600 font-medium leading-relaxed">${st.d}</p>
+                        </div>
+                    `;
+                    pCont.appendChild(item);
+                });
+            }
+
+            lucide.createIcons();
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+            loader.classList.add('loaded');
+        }
+
+        window.addEventListener('load', initializeApp);
+        
+        // Mobile Toggle
+        const toggleBtn = document.getElementById('menu-toggle');
+        const mMenu = document.getElementById('mobile-menu');
+        toggleBtn.onclick = () => mMenu.classList.toggle('hidden');
+        document.querySelectorAll('.mobile-link').forEach(l => l.onclick = () => mMenu.classList.add('hidden'));
+
+        // Navbar scroll behavior
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.remove('sm:top-4');
+                nav.classList.add('top-0');
+            } else {
+                nav.classList.add('sm:top-4');
+            }
+        });
+    </script>
+</body>
+</html>
